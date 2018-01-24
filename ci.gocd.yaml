@@ -3,7 +3,7 @@ environments:
     environment_variables:
       EXAMPLE_DEPLOYMENT: testing
     pipelines:
-      - yaml-example
+      - masaval-express
 pipelines:
   yamlpipe1:
     group: simple
@@ -18,20 +18,13 @@ pipelines:
               tasks:
                - exec: # indicates type of task
                    command: make
-  "yaml-example": # definition of yaml-example pipeline
-    group: yaml-example
-    label_template: "${mygit[:8]}"
-    locking: off
+  "masaval-express": # definition of yaml-example pipeline
+    group: defaultGroup
     materials:
       mygit: # this is the name of material
         # keyword git says about type of material and url at once
         git: http://my.example.org/mygit.git
         branch: ci
-      upstream:
-        # type is optional here, material type is implied based on presence of pipeline and stage fields
-        # type: dependency
-        pipeline: yamlpipe1
-        stage: build
     stages: # list of stages in order
       - build: # name of stage
           clean_workspace: true
