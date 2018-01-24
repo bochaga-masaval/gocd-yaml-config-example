@@ -5,19 +5,35 @@ environments:
     pipelines:
       - yaml-example
 pipelines:
-  yamlpipe1:
-    group: simple
+  "masaval-express":
+    group: defaultGroup
     materials:
       mygit:  # this is the name of material
         # says about type of material and url at once
         git: http://my.example.org/mygit.git
     stages:
-      - build: # name of stage
+      - BuildAndTest: # name of stage
           jobs:
-            build: # name of the job
+            Test: # name of the job
               tasks:
                - exec: # indicates type of task
-                   command: make
+                   command: /bin/sh
+                   arguments:
+                    - "gocd/pipeline/install_reqs.sh"
+      - Coverage: # name of stage
+          jobs:
+            "assert-coverage": # name of the job
+              tasks:
+               - fetch:
+                   pipeline: "masaval-express"
+                   stage: BuildAndTest
+                   job: Test
+                   source: test-reports/
+               - exec: # indicates type of task
+                   command: /usr/bin/python
+                   arguments:
+                    - "gocd/pipeline/assert_coverage.py"
+                   
   "yaml-example": # definition of yaml-example pipeline
     group: yaml-example
     label_template: "${mygit[:8]}"
